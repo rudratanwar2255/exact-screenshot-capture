@@ -17,9 +17,6 @@ export interface CircularCarouselProps {
   tilt?: number; // degrees
   perspective?: number; // px
   speed?: number;
-  autoRotate?: boolean;
-  autoSpeed?: number;
-  pauseOnHover?: boolean;
   radius?: number;
   itemWidth?: number;
   itemHeight?: number;
@@ -36,11 +33,8 @@ export function CircularCarousel({
   innerShade = 0.25,
   tilt = -4,
   perspective = 1300,
-  autoRotate = true,
-  autoSpeed = 0.0012,
-  pauseOnHover = true,
-  radius = 290,
-  itemWidth = 240,
+  radius = 340,
+  itemWidth = 230,
   itemHeight = 330,
   onFocus,
   onItemClick,
@@ -48,38 +42,35 @@ export function CircularCarousel({
 }: CircularCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [rotation, setRotation] = useState(0);
-  const rotationRef = useRef(0);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [responsiveRadius, setResponsiveRadius] = useState(radius);
   const [responsiveWidth, setResponsiveWidth] = useState(itemWidth);
   const [responsiveHeight, setResponsiveHeight] = useState(itemHeight);
 
   const isDragging = useRef(false);
-  const isHovered = useRef(false);
-  const isSnapping = useRef(false);
   const startX = useRef(0);
   const startRot = useRef(0);
   const velocity = useRef(0);
   const lastX = useRef(0);
   const lastTime = useRef(0);
-  const snapAnimFrame = useRef<number | null>(null);
+  const animationFrame = useRef<number | null>(null);
   const reduced = useReducedMotion();
 
   const total = items.length;
   const stepAngle = (2 * Math.PI) / total;
 
-  // Responsive sizing for mobile vs desktop with tighter gaps
+  // Responsive sizing for mobile vs desktop
   useEffect(() => {
     const updateDimensions = () => {
       const w = window.innerWidth;
       if (w < 640) {
-        setResponsiveRadius(Math.round(radius * 0.72));
-        setResponsiveWidth(Math.round(itemWidth * 0.76));
-        setResponsiveHeight(Math.round(itemHeight * 0.76));
+        setResponsiveRadius(260);
+        setResponsiveWidth(185);
+        setResponsiveHeight(265);
       } else if (w < 1024) {
-        setResponsiveRadius(Math.round(radius * 0.88));
-        setResponsiveWidth(Math.round(itemWidth * 0.9));
-        setResponsiveHeight(Math.round(itemHeight * 0.9));
+        setResponsiveRadius(320);
+        setResponsiveWidth(215);
+        setResponsiveHeight(305);
       } else {
         setResponsiveRadius(radius);
         setResponsiveWidth(itemWidth);
@@ -102,49 +93,43 @@ export function CircularCarousel({
     [stepAngle, total],
   );
 
-  // Continuous gentle automatic rotation loop
-  useEffect(() => {
-    let rafId: number;
-    let lastT = performance.now();
+  const snapToNearest = useCallback(
+    (currentRot: number) => {
+      let norm = (-currentRot) % (2 * Math.PI);
+      if (norm < 0) norm += 2 * Math.PI;
+      const targetIndex = Math.round(norm / stepAngle);
+      const targetAngle = -targetIndex * stepAngle;
 
-    const autoLoop = (now: number) => {
-      const dt = Math.min(64, now - lastT);
-      lastT = now;
+      const start = currentRot;
+      const change = targetAngle - (currentRot % (2 * Math.PI));
+      const startTime = performance.now();
+      const duration = 400;
 
-      if (
-        autoRotate &&
-        !isDragging.current &&
-        !isHovered.current &&
-        !isSnapping.current &&
-        !reduced
-      ) {
-        // Frame-rate normalized gentle drift
-        const deltaRot = autoSpeed * (dt / 16.666);
-        rotationRef.current += deltaRot;
-        setRotation(rotationRef.current);
+      const animateSnap = (now: number) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        const newAngle = start + change * ease;
+        setRotation(newAngle);
 
-        const newFocus = calculateFocus(rotationRef.current);
-        setFocusedIndex((prev) => {
-          if (prev !== newFocus) {
-            onFocus?.(newFocus);
-            return newFocus;
-          }
-          return prev;
-        });
-      }
+        const newFocus = calculateFocus(newAngle);
+        setFocusedIndex(newFocus);
+        onFocus?.(newFocus);
 
-      rafId = requestAnimationFrame(autoLoop);
-    };
-
-    rafId = requestAnimationFrame(autoLoop);
-    return () => cancelAnimationFrame(rafId);
-  }, [autoRotate, autoSpeed, calculateFocus, onFocus, reduced]);
+        if (progress < 1) {
+          animationFrame.current = requestAnimationFrame(animateSnap);
+        }
+      };
+      if (animationFrame.current) cancelAnimationFrame(animationFrame.current);
+      animationFrame.current = requestAnimationFrame(animateSnap);
+    },
+    [calculateFocus, onFocus, stepAngle],
+  );
 
   const focusItem = useCallback(
     (index: number) => {
-      isSnapping.current = true;
       const targetAngle = -index * stepAngle;
-      const start = rotationRef.current;
+      const start = rotation;
       let diff = (targetAngle - start) % (2 * Math.PI);
       if (diff > Math.PI) diff -= 2 * Math.PI;
       if (diff < -Math.PI) diff += 2 * Math.PI;
@@ -157,39 +142,35 @@ export function CircularCarousel({
         const progress = Math.min(1, elapsed / duration);
         const ease = 1 - Math.pow(1 - progress, 3);
         const newAngle = start + diff * ease;
-        rotationRef.current = newAngle;
         setRotation(newAngle);
 
         if (progress < 1) {
-          snapAnimFrame.current = requestAnimationFrame(animateFocus);
+          animationFrame.current = requestAnimationFrame(animateFocus);
         } else {
-          isSnapping.current = false;
           setFocusedIndex(index);
           onFocus?.(index);
         }
       };
-      if (snapAnimFrame.current) cancelAnimationFrame(snapAnimFrame.current);
-      snapAnimFrame.current = requestAnimationFrame(animateFocus);
+      if (animationFrame.current) cancelAnimationFrame(animationFrame.current);
+      animationFrame.current = requestAnimationFrame(animateFocus);
     },
-    [onFocus, stepAngle],
+    [onFocus, rotation, stepAngle],
   );
 
   const onPointerDown = (e: React.PointerEvent) => {
     isDragging.current = true;
-    isSnapping.current = false;
-    if (snapAnimFrame.current) cancelAnimationFrame(snapAnimFrame.current);
     startX.current = e.clientX;
-    startRot.current = rotationRef.current;
+    startRot.current = rotation;
     lastX.current = e.clientX;
     lastTime.current = performance.now();
     velocity.current = 0;
+    if (animationFrame.current) cancelAnimationFrame(animationFrame.current);
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
     if (!isDragging.current) return;
     const deltaX = e.clientX - startX.current;
     const newRot = startRot.current + deltaX * 0.004;
-    rotationRef.current = newRot;
     setRotation(newRot);
 
     const now = performance.now();
@@ -209,33 +190,35 @@ export function CircularCarousel({
     if (!isDragging.current) return;
     isDragging.current = false;
 
-    // If fast fling, apply smooth decay before resuming auto drift
     if (Math.abs(velocity.current) > 0.25) {
-      isSnapping.current = true;
       let currentVelocity = velocity.current * 0.015;
       const decay = 0.93;
 
       const animateInertia = () => {
-        rotationRef.current += currentVelocity;
-        setRotation(rotationRef.current);
-        const newFocus = calculateFocus(rotationRef.current);
-        setFocusedIndex(newFocus);
-        onFocus?.(newFocus);
+        setRotation((prev) => {
+          const next = prev + currentVelocity;
+          const newFocus = calculateFocus(next);
+          setFocusedIndex(newFocus);
+          onFocus?.(newFocus);
+          return next;
+        });
 
         currentVelocity *= decay;
         if (Math.abs(currentVelocity) > 0.0005) {
-          snapAnimFrame.current = requestAnimationFrame(animateInertia);
+          animationFrame.current = requestAnimationFrame(animateInertia);
         } else {
-          isSnapping.current = false;
+          snapToNearest(rotation);
         }
       };
-      snapAnimFrame.current = requestAnimationFrame(animateInertia);
+      animationFrame.current = requestAnimationFrame(animateInertia);
+    } else {
+      snapToNearest(rotation);
     }
   };
 
   useEffect(() => {
     return () => {
-      if (snapAnimFrame.current) cancelAnimationFrame(snapAnimFrame.current);
+      if (animationFrame.current) cancelAnimationFrame(animationFrame.current);
     };
   }, []);
 
@@ -246,12 +229,6 @@ export function CircularCarousel({
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
-      onPointerEnter={() => {
-        if (pauseOnHover) isHovered.current = true;
-      }}
-      onPointerLeave={() => {
-        if (pauseOnHover) isHovered.current = false;
-      }}
       className={`relative select-none touch-pan-y cursor-grab active:cursor-grabbing ${className}`}
       style={{
         perspective: `${perspective}px`,

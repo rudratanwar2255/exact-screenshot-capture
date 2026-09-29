@@ -32,7 +32,7 @@ export const content = {
   },
 
   timeline: {
-    title: "The Story of Us",
+    title: "Our timeline",
     stars: [
       {
         date: "3 Dec 2025",

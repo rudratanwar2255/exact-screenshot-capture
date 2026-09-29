@@ -49,8 +49,8 @@ export function Journey() {
           innerShade={0.25}
           tilt={-4}
           perspective={1300}
-          radius={290}
-          itemWidth={240}
+          radius={340}
+          itemWidth={230}
           itemHeight={330}
           onFocus={(idx) => setActiveIndex(idx)}
           onItemClick={(_item, idx) => handleOpenActive(idx)}
