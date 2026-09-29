@@ -43,7 +43,7 @@ function ParticleHeart({ reduced }: { reduced: boolean }) {
       </bufferGeometry>
       <pointsMaterial
         size={0.035}
-        color="#f7b9c8"
+        color="#9be3d8"
         transparent
         opacity={0.95}
         sizeAttenuation
