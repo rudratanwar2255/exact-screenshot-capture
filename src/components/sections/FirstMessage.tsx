@@ -61,7 +61,7 @@ export function FirstMessage() {
           </div>
         </motion.div>
 
-        {/* Right Side: Formatted Glass Card with Timestamp Badge & Gujarati Caption */}
+        {/* Right Side: Formatted Glass Card with Timestamp Badge & Complete Gujarati Story */}
         <Reveal delay={0.2} className="flex flex-col justify-center">
           <div className="glass-card rounded-3xl p-6 sm:p-8 border border-rosegold/30 shadow-[0_10px_40px_rgba(13,6,20,0.7)] backdrop-blur-xl">
             {/* Timestamp Header Badge */}
@@ -70,17 +70,12 @@ export function FirstMessage() {
               <span>12:38 AM · The Beginning</span>
             </div>
 
-            {/* Exact Gujarati Caption in formatted glass card */}
-            <div className="font-display text-base sm:text-lg leading-relaxed text-cream font-medium whitespace-pre-line space-y-2">
+            {/* Complete Gujarati Story */}
+            <div className="font-display text-base sm:text-lg leading-relaxed text-cream font-medium whitespace-pre-line space-y-3">
               {c.caption}
             </div>
 
-            {/* English sentimental note */}
-            <p className="mt-5 font-script text-2xl sm:text-3xl text-blush text-glow">
-              "{c.fromMe}"
-            </p>
-
-            <div className="mt-5 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-rosegold/70">
+            <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-rosegold/70">
               <span className="font-body tracking-wider uppercase">Parthi's Birthday</span>
               <span className="font-body tracking-widest">3 DEC 2025</span>
             </div>
