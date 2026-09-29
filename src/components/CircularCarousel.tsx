@@ -39,8 +39,8 @@ export function CircularCarousel({
   autoRotate = true,
   autoSpeed = 0.0012,
   pauseOnHover = true,
-  radius = 340,
-  itemWidth = 230,
+  radius = 290,
+  itemWidth = 240,
   itemHeight = 330,
   onFocus,
   onItemClick,
@@ -68,18 +68,18 @@ export function CircularCarousel({
   const total = items.length;
   const stepAngle = (2 * Math.PI) / total;
 
-  // Responsive sizing for mobile vs desktop
+  // Responsive sizing for mobile vs desktop with tighter gaps
   useEffect(() => {
     const updateDimensions = () => {
       const w = window.innerWidth;
       if (w < 640) {
-        setResponsiveRadius(260);
-        setResponsiveWidth(185);
-        setResponsiveHeight(265);
+        setResponsiveRadius(Math.round(radius * 0.72));
+        setResponsiveWidth(Math.round(itemWidth * 0.76));
+        setResponsiveHeight(Math.round(itemHeight * 0.76));
       } else if (w < 1024) {
-        setResponsiveRadius(320);
-        setResponsiveWidth(215);
-        setResponsiveHeight(305);
+        setResponsiveRadius(Math.round(radius * 0.88));
+        setResponsiveWidth(Math.round(itemWidth * 0.9));
+        setResponsiveHeight(Math.round(itemHeight * 0.9));
       } else {
         setResponsiveRadius(radius);
         setResponsiveWidth(itemWidth);
@@ -118,7 +118,7 @@ export function CircularCarousel({
         !isSnapping.current &&
         !reduced
       ) {
-        // Frame-rate independent subtle rotation
+        // Frame-rate normalized gentle drift
         const deltaRot = autoSpeed * (dt / 16.666);
         rotationRef.current += deltaRot;
         setRotation(rotationRef.current);
@@ -209,7 +209,7 @@ export function CircularCarousel({
     if (!isDragging.current) return;
     isDragging.current = false;
 
-    // If fast fling, apply smooth decay before resuming auto rotation
+    // If fast fling, apply smooth decay before resuming auto drift
     if (Math.abs(velocity.current) > 0.25) {
       isSnapping.current = true;
       let currentVelocity = velocity.current * 0.015;
