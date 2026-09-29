@@ -3,9 +3,22 @@ import { content } from "@/content";
 import { Section, SectionTitle } from "@/components/Section";
 import { SmartImage } from "@/components/SmartImage";
 import { useReducedMotion } from "@/lib/motion-prefs";
+import { usePhotoModal } from "@/components/PhotoModal";
 
 export function Bracelet() {
   const reduced = useReducedMotion();
+  const { openPhoto } = usePhotoModal();
+  const fullStoryCaption = content.bracelet.story.join(" ");
+
+  const handleOpenBracelet = () => {
+    openPhoto({
+      src: content.bracelet.image,
+      alt: "The bracelet charm",
+      title: "The Bracelet Charm",
+      caption: fullStoryCaption,
+      badge: "A Sweet Story 🫶🏻",
+    });
+  };
 
   return (
     <Section>
@@ -43,6 +56,7 @@ export function Bracelet() {
 
         {/* Floating rotating bracelet disc */}
         <motion.div
+          onClick={handleOpenBracelet}
           animate={
             reduced
               ? {}
@@ -55,13 +69,16 @@ export function Bracelet() {
             rotateY: { duration: 18, repeat: Infinity, ease: "linear" },
             y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
           }}
-          className="glass-card relative z-10 size-60 sm:size-64 overflow-hidden rounded-full p-3 border-2 border-blush/40 shadow-[0_0_40px_rgba(251,164,184,0.35)]"
+          className="glass-card relative z-10 size-60 sm:size-64 overflow-hidden rounded-full p-3 border-2 border-blush/40 shadow-[0_0_40px_rgba(251,164,184,0.35)] hover:border-blush/90 transition-all duration-300 cursor-pointer"
           style={{ transformStyle: "preserve-3d" }}
         >
           <SmartImage
             name={content.bracelet.image}
             alt="The bracelet charm"
-            className="size-full rounded-full object-cover"
+            modalTitle="The Bracelet Charm"
+            modalCaption={fullStoryCaption}
+            modalBadge="A Sweet Story 🫶🏻"
+            className="size-full rounded-full object-cover pointer-events-none"
           />
         </motion.div>
 
@@ -70,18 +87,22 @@ export function Bracelet() {
       </div>
 
       {/* Line-by-line story reveal */}
-      <div className="mt-10 max-w-sm space-y-4 px-4 text-center">
+      <div className="mt-10 max-w-lg space-y-4 px-4 text-center">
         {content.bracelet.story.map((line, i) => (
-          <motion.p
+          <motion.div
             key={i}
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.6 }}
-            transition={{ duration: 0.85, delay: i * 0.4 }}
-            className="font-display text-lg sm:text-xl leading-relaxed text-cream/95"
+            transition={{ duration: 0.85, delay: i * 0.35 }}
+            className={`glass-card rounded-2xl p-4 sm:p-5 border border-blush/25 shadow-lg backdrop-blur-md ${
+              i === 0
+                ? "inline-block font-script text-3xl sm:text-4xl text-blush text-glow mx-auto"
+                : "font-display text-base sm:text-lg leading-relaxed text-cream/95"
+            }`}
           >
-            {line}
-          </motion.p>
+            {i === 0 ? `“${line}”` : line}
+          </motion.div>
         ))}
       </div>
     </Section>

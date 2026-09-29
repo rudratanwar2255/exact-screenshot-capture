@@ -3,9 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { content } from "@/content";
 import { Reveal, Section, SectionTitle } from "@/components/Section";
 import { CircularCarousel } from "@/components/CircularCarousel";
+import { usePhotoModal } from "@/components/PhotoModal";
+import { Maximize2 } from "lucide-react";
 
 export function Journey() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const { openPhoto } = usePhotoModal();
   const photos = content.journey.photos;
 
   const carouselItems = photos.map((p) => ({
@@ -15,6 +18,17 @@ export function Journey() {
   }));
 
   const activePhoto = photos[activeIndex] || photos[0];
+
+  const handleOpenActive = (index: number = activeIndex) => {
+    const photo = photos[index] || photos[0];
+    openPhoto({
+      src: photo.src,
+      alt: photo.caption,
+      title: `Our Journey — Moment ${index + 1}`,
+      caption: photo.caption,
+      badge: `Photo ${index + 1} of ${photos.length}`,
+    });
+  };
 
   return (
     <Section>
@@ -39,11 +53,12 @@ export function Journey() {
           itemWidth={190}
           itemHeight={270}
           onFocus={(idx) => setActiveIndex(idx)}
+          onItemClick={(_item, idx) => handleOpenActive(idx)}
           className="max-w-md"
         />
       </div>
 
-      {/* Active Photo Caption */}
+      {/* Active Photo Caption & Fullscreen Trigger */}
       <div className="mt-4 min-h-16 max-w-sm px-6 text-center">
         <AnimatePresence mode="wait">
           <motion.div
@@ -52,12 +67,15 @@ export function Journey() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.35 }}
+            onClick={() => handleOpenActive(activeIndex)}
+            className="cursor-pointer group"
           >
-            <p className="font-script text-2xl sm:text-3xl text-blush text-glow">
+            <p className="font-script text-2xl sm:text-3xl text-blush text-glow group-hover:scale-105 transition-transform duration-200">
               {activePhoto.caption}
             </p>
-            <p className="mt-1 font-body text-[11px] tracking-[0.25em] text-rosegold/70 uppercase">
-              Moment {activeIndex + 1} of {photos.length} · Tap or drag to explore
+            <p className="mt-2 inline-flex items-center gap-1.5 font-body text-[11px] tracking-[0.2em] text-rosegold/80 uppercase group-hover:text-blush transition-colors">
+              <Maximize2 className="size-3 text-blush" />
+              Moment ${activeIndex + 1} of ${photos.length} · Tap to expand
             </p>
           </motion.div>
         </AnimatePresence>

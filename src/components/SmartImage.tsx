@@ -1,20 +1,43 @@
 import { useState } from "react";
+import { usePhotoModal } from "@/components/PhotoModal";
 
-/**
- * Shows an image from /public/images/<name>.
- * Until the real photo is uploaded, it renders a soft dreamy placeholder
- * with the expected filename so you know which photo goes where.
- */
 export function SmartImage({
   name,
   alt,
   className = "",
+  modalCaption,
+  modalTitle,
+  modalBadge,
+  enableModal = true,
+  onClick,
 }: {
   name: string;
   alt: string;
   className?: string;
+  modalCaption?: string;
+  modalTitle?: string;
+  modalBadge?: string;
+  enableModal?: boolean;
+  onClick?: () => void;
 }) {
   const [failed, setFailed] = useState(false);
+  const { openPhoto } = usePhotoModal();
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+      return;
+    }
+    if (enableModal) {
+      openPhoto({
+        src: name,
+        alt,
+        title: modalTitle,
+        caption: modalCaption || alt,
+        badge: modalBadge,
+      });
+    }
+  };
 
   if (failed) {
     return (
@@ -28,14 +51,17 @@ export function SmartImage({
     );
   }
 
+  const src = name.startsWith("/") || name.startsWith("http") ? name : `/images/${name}`;
+
   return (
     <img
-      src={`/images/${name}`}
+      src={src}
       alt={alt}
       loading="lazy"
       decoding="async"
+      onClick={handleClick}
       onError={() => setFailed(true)}
-      className={className}
+      className={`${className} ${enableModal ? "cursor-pointer transition-transform duration-200 hover:scale-[1.01]" : ""}`}
     />
   );
 }
