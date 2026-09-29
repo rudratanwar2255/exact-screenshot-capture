@@ -19,6 +19,15 @@
  */
 
 @theme inline {
+  --font-display: "Playfair Display", serif;
+  --font-script: "Great Vibes", cursive;
+  --font-body: "Inter", sans-serif;
+  --color-midnight: var(--midnight);
+  --color-plum: var(--plum);
+  --color-plum-glass: var(--plum-glass);
+  --color-rosegold: var(--rosegold);
+  --color-blush: var(--blush);
+  --color-cream: var(--cream);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
