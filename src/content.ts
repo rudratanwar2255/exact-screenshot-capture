@@ -91,8 +91,8 @@ export const content = {
     finale: "Here's to many more months, Parthi. — Anup",
   },
 
-  // Background music file: put your mp3 at /public/audio/our-song.mp3
-  music: "/audio/our-song.mp3",
+  // Background music: "Be My Baby" cover, trimmed to a 90s loop with soft fades
+  music: "/__l5e/assets-v1/2d9205ea-6957-4b25-8f3d-eaf31b6df6d9/our-song.mp3",
 };
 
 export type Content = typeof content;
