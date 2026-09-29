@@ -52,25 +52,29 @@ export const content = {
     ],
   },
 
-  journey: {
+    journey: {
     title: "Our journey",
     subtitle: "Swipe through the moments that mean the world to me.",
     photos: [
       {
         src: "photo-1.jpg",
-        caption: "Us, laughter, and nowhere else I'd rather be.",
+        caption: "Us, matching in pink & looking perfect together 💖",
       },
       {
         src: "photo-2.jpg",
-        caption: "My favourite view: your smile glowing right next to mine.",
+        caption: "My favourite view: your smile glowing right next to mine ✨",
       },
       {
         src: "photo-3.jpg",
-        caption: "Every little moment feels like magic with you.",
+        caption: "Your cute pouts and crazy silly moments with me 🤭",
       },
       {
         src: "photo-4.jpg",
-        caption: "Holding on to you and every sweet memory we share.",
+        caption: "Every little second feels like magic by your side 🫶🏻",
+      },
+      {
+        src: "photo-5.jpg",
+        caption: "Holding on to you and every sweet memory we create ♾️",
       },
     ],
   },
