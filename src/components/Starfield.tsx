@@ -46,7 +46,7 @@ function FloatingHearts({ count = 14, reduced = false }) {
       {seeds.map((s, i) => (
         <mesh key={i} geometry={geo} position={[s.x, s.y, s.z]} scale={s.s}>
           <meshBasicMaterial
-            color={i % 3 === 0 ? "#f3c6a5" : "#f7b9c8"}
+            color={i % 3 === 0 ? "#9be3d8" : "#7fd4c8"}
             transparent
             opacity={0.35}
             side={THREE.DoubleSide}
