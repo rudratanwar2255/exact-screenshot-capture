@@ -21,26 +21,32 @@ export interface CircularCarouselProps {
   itemWidth?: number;
   itemHeight?: number;
   onFocus?: (index: number) => void;
+  onItemClick?: (item: CircularCarouselItem, index: number) => void;
   className?: string;
 }
 
 export function CircularCarousel({
   items,
-  bend = 0.35,
-  depthFade = 0.65,
+  bend = 0.88,
+  depthFade = 0.6,
   fadeColor = "#0d0614",
-  innerShade = 0.3,
-  tilt = -2,
-  perspective = 1100,
-  radius = 260,
-  itemWidth = 200,
-  itemHeight = 280,
+  innerShade = 0.25,
+  tilt = -4,
+  perspective = 1300,
+  radius = 340,
+  itemWidth = 230,
+  itemHeight = 330,
   onFocus,
+  onItemClick,
   className = "",
 }: CircularCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [rotation, setRotation] = useState(0);
   const [focusedIndex, setFocusedIndex] = useState(0);
+  const [responsiveRadius, setResponsiveRadius] = useState(radius);
+  const [responsiveWidth, setResponsiveWidth] = useState(itemWidth);
+  const [responsiveHeight, setResponsiveHeight] = useState(itemHeight);
+
   const isDragging = useRef(false);
   const startX = useRef(0);
   const startRot = useRef(0);
@@ -53,10 +59,32 @@ export function CircularCarousel({
   const total = items.length;
   const stepAngle = (2 * Math.PI) / total;
 
+  // Responsive sizing for mobile vs desktop
+  useEffect(() => {
+    const updateDimensions = () => {
+      const w = window.innerWidth;
+      if (w < 640) {
+        setResponsiveRadius(260);
+        setResponsiveWidth(185);
+        setResponsiveHeight(265);
+      } else if (w < 1024) {
+        setResponsiveRadius(320);
+        setResponsiveWidth(215);
+        setResponsiveHeight(305);
+      } else {
+        setResponsiveRadius(radius);
+        setResponsiveWidth(itemWidth);
+        setResponsiveHeight(itemHeight);
+      }
+    };
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, [radius, itemWidth, itemHeight]);
+
   // Track active focused item
   const calculateFocus = useCallback(
     (currentRot: number) => {
-      // Normalize angle
       let normalized = (-currentRot) % (2 * Math.PI);
       if (normalized < 0) normalized += 2 * Math.PI;
       const index = Math.round(normalized / stepAngle) % total;
@@ -71,7 +99,7 @@ export function CircularCarousel({
       if (norm < 0) norm += 2 * Math.PI;
       const targetIndex = Math.round(norm / stepAngle);
       const targetAngle = -targetIndex * stepAngle;
-      
+
       const start = currentRot;
       const change = targetAngle - (currentRot % (2 * Math.PI));
       const startTime = performance.now();
@@ -80,7 +108,6 @@ export function CircularCarousel({
       const animateSnap = (now: number) => {
         const elapsed = now - startTime;
         const progress = Math.min(1, elapsed / duration);
-        // easeOutCubic
         const ease = 1 - Math.pow(1 - progress, 3);
         const newAngle = start + change * ease;
         setRotation(newAngle);
@@ -99,94 +126,91 @@ export function CircularCarousel({
     [calculateFocus, onFocus, stepAngle],
   );
 
-  const focusItem = (index: number) => {
-    if (animationFrame.current) cancelAnimationFrame(animationFrame.current);
-    const targetAngle = -index * stepAngle;
-    
-    // Find shortest rotational path
-    let diff = (targetAngle - rotation) % (2 * Math.PI);
-    if (diff > Math.PI) diff -= 2 * Math.PI;
-    if (diff < -Math.PI) diff += 2 * Math.PI;
+  const focusItem = useCallback(
+    (index: number) => {
+      const targetAngle = -index * stepAngle;
+      const start = rotation;
+      let diff = (targetAngle - start) % (2 * Math.PI);
+      if (diff > Math.PI) diff -= 2 * Math.PI;
+      if (diff < -Math.PI) diff += 2 * Math.PI;
 
-    const start = rotation;
-    const startTime = performance.now();
-    const duration = 500;
+      const startTime = performance.now();
+      const duration = 500;
 
-    const animate = (now: number) => {
-      const elapsed = now - startTime;
-      const p = Math.min(1, elapsed / duration);
-      const ease = 1 - Math.pow(1 - p, 3);
-      const newAngle = start + diff * ease;
-      setRotation(newAngle);
-      setFocusedIndex(index);
-      onFocus?.(index);
+      const animateFocus = (now: number) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        const newAngle = start + diff * ease;
+        setRotation(newAngle);
 
-      if (p < 1) {
-        animationFrame.current = requestAnimationFrame(animate);
-      }
-    };
-    animationFrame.current = requestAnimationFrame(animate);
-  };
+        if (progress < 1) {
+          animationFrame.current = requestAnimationFrame(animateFocus);
+        } else {
+          setFocusedIndex(index);
+          onFocus?.(index);
+        }
+      };
+      if (animationFrame.current) cancelAnimationFrame(animationFrame.current);
+      animationFrame.current = requestAnimationFrame(animateFocus);
+    },
+    [onFocus, rotation, stepAngle],
+  );
 
-  // Drag & Touch gestures with momentum
   const onPointerDown = (e: React.PointerEvent) => {
-    if (animationFrame.current) cancelAnimationFrame(animationFrame.current);
     isDragging.current = true;
     startX.current = e.clientX;
-    lastX.current = e.clientX;
     startRot.current = rotation;
+    lastX.current = e.clientX;
     lastTime.current = performance.now();
     velocity.current = 0;
-    (e.target as HTMLElement)?.setPointerCapture?.(e.pointerId);
+    if (animationFrame.current) cancelAnimationFrame(animationFrame.current);
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
     if (!isDragging.current) return;
+    const deltaX = e.clientX - startX.current;
+    const newRot = startRot.current + deltaX * 0.004;
+    setRotation(newRot);
+
     const now = performance.now();
     const dt = Math.max(1, now - lastTime.current);
-    const dx = e.clientX - lastX.current;
-    velocity.current = dx / dt;
+    velocity.current = (e.clientX - lastX.current) / dt;
     lastX.current = e.clientX;
     lastTime.current = now;
 
-    const totalDx = e.clientX - startX.current;
-    const angleDelta = (totalDx / 240) * 1.2;
-    const newAngle = startRot.current + angleDelta;
-    setRotation(newAngle);
-
-    const active = calculateFocus(newAngle);
-    if (active !== focusedIndex) {
-      setFocusedIndex(active);
-      onFocus?.(active);
+    const newFocus = calculateFocus(newRot);
+    if (newFocus !== focusedIndex) {
+      setFocusedIndex(newFocus);
+      onFocus?.(newFocus);
     }
   };
 
-  const onPointerUp = (e: React.PointerEvent) => {
+  const onPointerUp = () => {
     if (!isDragging.current) return;
     isDragging.current = false;
-    try {
-      (e.target as HTMLElement)?.releasePointerCapture?.(e.pointerId);
-    } catch {
-      // ignore
-    }
 
-    const currentVel = velocity.current;
-    if (Math.abs(currentVel) > 0.3) {
-      let curAngle = rotation;
-      let vel = currentVel * 0.035;
-      const decay = () => {
-        vel *= 0.92;
-        curAngle += vel;
-        setRotation(curAngle);
-        setFocusedIndex(calculateFocus(curAngle));
+    if (Math.abs(velocity.current) > 0.25) {
+      let currentVelocity = velocity.current * 0.015;
+      const decay = 0.93;
 
-        if (Math.abs(vel) > 0.001) {
-          animationFrame.current = requestAnimationFrame(decay);
+      const animateInertia = () => {
+        setRotation((prev) => {
+          const next = prev + currentVelocity;
+          const newFocus = calculateFocus(next);
+          setFocusedIndex(newFocus);
+          onFocus?.(newFocus);
+          return next;
+        });
+
+        currentVelocity *= decay;
+        if (Math.abs(currentVelocity) > 0.0005) {
+          animationFrame.current = requestAnimationFrame(animateInertia);
         } else {
-          snapToNearest(curAngle);
+          snapToNearest(rotation);
         }
       };
-      animationFrame.current = requestAnimationFrame(decay);
+      animationFrame.current = requestAnimationFrame(animateInertia);
     } else {
       snapToNearest(rotation);
     }
@@ -208,19 +232,30 @@ export function CircularCarousel({
       className={`relative select-none touch-pan-y cursor-grab active:cursor-grabbing ${className}`}
       style={{
         perspective: `${perspective}px`,
-        height: `${itemHeight + 80}px`,
+        height: `${responsiveHeight + 110}px`,
         width: "100%",
         maxWidth: "100vw",
         overflow: "hidden",
       }}
     >
+      {/* 3D Circular Orbit Ring Glow Floor */}
+      <div 
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-blush/20 shadow-[0_0_80px_rgba(251,164,184,0.15)]"
+        style={{
+          width: `${responsiveRadius * 2 + 60}px`,
+          height: `${responsiveRadius * 2 + 60}px`,
+          transform: `rotateX(${80 + tilt}deg) translateZ(-80px)`,
+          transformStyle: "preserve-3d",
+        }}
+      />
+
       <div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
         style={{
           transformStyle: "preserve-3d",
           transform: `rotateX(${tilt}deg)`,
-          width: `${itemWidth}px`,
-          height: `${itemHeight}px`,
+          width: `${responsiveWidth}px`,
+          height: `${responsiveHeight}px`,
         }}
       >
         {items.map((item, idx) => {
@@ -228,41 +263,42 @@ export function CircularCarousel({
           const sin = Math.sin(angle);
           const cos = Math.cos(angle);
 
-          const x = sin * radius;
-          const z = (cos - 1) * radius;
+          const x = sin * responsiveRadius;
+          const z = (cos - 1) * responsiveRadius;
+          // Genuine circular curve tangent
           const rotY = -(angle * (180 / Math.PI)) * (reduced ? 0 : bend);
 
           // Depth fade calculation (1 when at front, fading towards back)
           const depthNorm = (cos + 1) / 2; // 0 to 1
-          const opacity = 1 - (1 - depthNorm) * depthFade;
-          const scale = 0.85 + depthNorm * 0.2;
+          const opacity = 0.25 + depthNorm * 0.75;
+          const scale = 0.82 + depthNorm * 0.24;
           const isCurrent = idx === focusedIndex;
 
           return (
             <div
               key={idx}
               onClick={(e) => {
-                // If it was a small tap rather than drag, focus on item
                 if (Math.abs(e.clientX - startX.current) < 8) {
                   focusItem(idx);
+                  onItemClick?.(item, idx);
                 }
               }}
               className="absolute left-0 top-0 transition-transform"
               style={{
-                width: `${itemWidth}px`,
-                height: `${itemHeight}px`,
+                width: `${responsiveWidth}px`,
+                height: `${responsiveHeight}px`,
                 transform: `translate3d(${x}px, 0px, ${z}px) rotateY(${rotY}deg) scale(${scale})`,
                 transformStyle: "preserve-3d",
                 zIndex: Math.round(depthNorm * 100),
-                opacity: Math.max(0.1, opacity),
+                opacity: Math.max(0.15, opacity),
                 cursor: "pointer",
               }}
             >
               <div
-                className={`group relative size-full overflow-hidden rounded-3xl p-2.5 transition-all duration-300 ${
+                className={`group relative size-full overflow-hidden rounded-3xl p-3 transition-all duration-300 ${
                   isCurrent
-                    ? "ring-2 ring-blush/80 shadow-[0_0_35px_rgba(251,164,184,0.4)]"
-                    : "ring-1 ring-rosegold/20"
+                    ? "ring-2 ring-blush shadow-[0_0_45px_rgba(251,164,184,0.55)] border border-blush/80"
+                    : "ring-1 ring-rosegold/30 border border-white/10 hover:ring-blush/60"
                 } glass-card`}
               >
                 <img
@@ -282,12 +318,12 @@ export function CircularCarousel({
                   }}
                 />
 
-                {/* Romantic glowing border highlight on hover/focus */}
+                {/* Highlight ring on hover */}
                 <div
                   className={`pointer-events-none absolute inset-0 rounded-3xl border transition-opacity duration-300 ${
                     isCurrent
-                      ? "border-blush/60 opacity-100"
-                      : "border-transparent opacity-0 group-hover:opacity-40"
+                      ? "border-blush/70 opacity-100"
+                      : "border-transparent opacity-0 group-hover:opacity-60 group-hover:border-blush/40"
                   }`}
                 />
               </div>

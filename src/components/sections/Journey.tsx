@@ -43,18 +43,18 @@ export function Journey() {
       <div className="w-full flex justify-center items-center py-2">
         <CircularCarousel
           items={carouselItems}
-          bend={0.35}
-          depthFade={0.7}
+          bend={0.88}
+          depthFade={0.6}
           fadeColor="rgba(0,0,0,0.7)"
-          innerShade={0.35}
-          tilt={-2}
-          perspective={1000}
-          radius={250}
-          itemWidth={190}
-          itemHeight={270}
+          innerShade={0.25}
+          tilt={-4}
+          perspective={1300}
+          radius={340}
+          itemWidth={230}
+          itemHeight={330}
           onFocus={(idx) => setActiveIndex(idx)}
           onItemClick={(_item, idx) => handleOpenActive(idx)}
-          className="max-w-md"
+          className="w-full max-w-5xl"
         />
       </div>
 
