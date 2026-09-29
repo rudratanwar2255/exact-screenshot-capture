@@ -1,24 +1,102 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { content } from "@/content";
+import { Loader } from "@/components/Loader";
+import { Starfield } from "@/components/Starfield";
+import { Opening } from "@/components/sections/Opening";
+import { FirstMessage } from "@/components/sections/FirstMessage";
+import { Timeline } from "@/components/sections/Timeline";
+import { Journey } from "@/components/sections/Journey";
+import { Chats } from "@/components/sections/Chats";
+import { Bracelet } from "@/components/sections/Bracelet";
+import { Curls } from "@/components/sections/Curls";
+import { Months } from "@/components/sections/Months";
+import { Letter } from "@/components/sections/Letter";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Parthi & Anup — 5 Months" },
+      {
+        name: "description",
+        content:
+          "A little story for Parthi: five months of us, told in stars, photos and words. From Anup.",
+      },
+      { property: "og:title", content: "Parthi & Anup — 5 Months" },
+      {
+        property: "og:description",
+        content:
+          "A little story for Parthi: five months of us, told in stars, photos and words. From Anup.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: Story,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Story() {
+  const [loading, setLoading] = useState(true);
+  const [started, setStarted] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const id = setTimeout(() => setLoading(false), 2200);
+    return () => clearTimeout(id);
+  }, []);
+
+  const begin = () => {
+    setStarted(true);
+    const audio = audioRef.current;
+    if (audio) {
+      audio.volume = 0.35;
+      audio.play().catch(() => {});
+    }
+    window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+  };
+
+  const toggleMute = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.muted = !audio.muted;
+    setMuted(audio.muted);
+  };
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="relative">
+      <Starfield />
+      <audio ref={audioRef} src={content.music} loop preload="none" />
+
+      <AnimatePresence>{loading && <Loader key="loader" />}</AnimatePresence>
+
+      {started && (
+        <motion.button
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          onClick={toggleMute}
+          aria-label={muted ? "Unmute music" : "Mute music"}
+          className="glass-card fixed top-4 right-4 z-30 size-10 rounded-full text-sm"
+        >
+          {muted ? "🔇" : "🎵"}
+        </motion.button>
+      )}
+
+      <Opening onBegin={begin} started={started} />
+      <FirstMessage />
+      <Timeline />
+      <Journey />
+      <Chats />
+      <Bracelet />
+      <Curls />
+      <Months />
+      <Letter />
+
+      <footer className="pb-12 text-center font-script text-xl text-cream/45">
+        for Parthi, always — Anup
+      </footer>
+    </main>
   );
 }
