@@ -71,9 +71,9 @@ export function FirstMessage() {
             </div>
 
             {/* Exact Gujarati Caption in formatted glass card */}
-            <p className="font-display text-lg sm:text-2xl leading-relaxed text-cream font-medium">
-              "{c.caption}"
-            </p>
+            <div className="font-display text-base sm:text-lg leading-relaxed text-cream font-medium whitespace-pre-line space-y-2">
+              {c.caption}
+            </div>
 
             {/* English sentimental note */}
             <p className="mt-5 font-script text-2xl sm:text-3xl text-blush text-glow">

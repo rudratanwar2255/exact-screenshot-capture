@@ -26,8 +26,7 @@ export const content = {
     title: "Where it all began",
     image: "first-message.jpg",
     timestamp: "12:38 AM · 3 December 2025",
-    caption:
-      "Bhai that 12.38 valu moment mane jindgi bhar yaad rese bas vichar aavtoto wish karu k nai...",
+    caption: "Bhai that 12.38 valu moment mane jindgi bhar yaad rese bas vichar aavtoto wish karu k nai \nReply su aavse, reply b aavse k nai or ignore kri dese\nBut mane noti khabar k ek birthday wish motti unpredictable love story ma badlai jase\nAnd aavi rite badhu thai jase bhai totally unexpected...\nYk hu nathi evo k koi na thi etlo attach thau but aavu vichairu b notu k aa chokri thi aatlo gaando pyaar thai jase k revase b ni vaat kaira vagar🥺🥺🥺",
     fromMe:
       "Heart racing, rewriting the message ten times hoping to make you smile... and that one birthday wish changed my whole world.",
   },
