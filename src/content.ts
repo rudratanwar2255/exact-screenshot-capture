@@ -11,8 +11,8 @@ export const content = {
 
   // Key dates
   firstMessage: "2025-12-03T00:38:00", // 3 Dec 2025, 12:38 AM
-  coupleDate: "2026-05-01T00:00:00", // the day you became a couple
-  milestone: "2026-10-01T00:00:00", // 5 months together
+  coupleDate: "2026-05-01T00:00:00", // 1 May 2026 (the day you became a couple)
+  milestone: "2026-10-01T00:00:00", // 1 Oct 2026 (5 months together)
   milestoneLabel: "5 months",
 
   loading: "Loading our story…",
@@ -28,27 +28,51 @@ export const content = {
     timestamp: "12:38 AM · 3 December 2025",
     caption:
       "12:38 AM. The first minute of your birthday, and the beginning of everything.",
-    // ✍️ Replace with your own words
-    fromMe: "[HOW IT FELT TO SEND THAT FIRST MESSAGE]",
+    fromMe:
+      "Heart racing, rewriting the message ten times hoping to make you smile... and that one birthday wish changed my whole world.",
   },
 
   timeline: {
     title: "Our timeline",
     stars: [
-      { date: "3 Dec 2025", label: "The first message" },
-      { date: "1 May 2026", label: "The day we became us" },
-      { date: "1 Oct 2026", label: "5 months together" },
+      {
+        date: "3 Dec 2025",
+        label: "The first message",
+        sub: "12:38 AM on your birthday",
+      },
+      {
+        date: "1 May 2026",
+        label: "The day we became us",
+        sub: "Where forever began",
+      },
+      {
+        date: "1 Oct 2026",
+        label: "5 months together",
+        sub: "Our sweetest milestone",
+      },
     ],
   },
 
   journey: {
     title: "Our journey",
-    subtitle: "Swipe through us.",
-    // photo file names live in /public/images/
+    subtitle: "Swipe through the moments that mean the world to me.",
     photos: [
-      { src: "photo-1.jpg", caption: "Us, the sunset, and nowhere else I'd rather be." },
-      { src: "photo-2.jpg", caption: "Even the camera added hearts. It knew." },
-      { src: "photo-3.jpg", caption: "My favourite view: your smile next to mine." },
+      {
+        src: "photo-1.jpg",
+        caption: "Us, laughter, and nowhere else I'd rather be.",
+      },
+      {
+        src: "photo-2.jpg",
+        caption: "My favourite view: your smile glowing right next to mine.",
+      },
+      {
+        src: "photo-3.jpg",
+        caption: "Every little moment feels like magic with you.",
+      },
+      {
+        src: "photo-4.jpg",
+        caption: "Holding on to you and every sweet memory we share.",
+      },
     ],
   },
 
@@ -56,17 +80,16 @@ export const content = {
     title: "Cute chats",
     caption:
       "The little conversations that became my favorite part of every day.",
-    images: ["chat-1.jpg", "chat-2.jpg", "chat-3.jpg", "chat-4.jpg"],
+    images: ["chat-1.jpg", "chat-2.jpg", "chat-3.jpg"],
   },
 
   bracelet: {
     title: "The bracelet",
     image: "bracelet.jpg",
-    // ✍️ One line per line of the story — they reveal one by one
     story: [
-      "[BRACELET STORY LINE 1]",
-      "[BRACELET STORY LINE 2]",
-      "[BRACELET STORY LINE 3]",
+      "A delicate handmade charm, threaded with all my love in every bead.",
+      "A butterfly for your light, soft flowers for your sweet smile.",
+      "A keepsake meant to stay close to you wherever you go, just as I'll always stay by your side.",
     ],
   },
 
@@ -85,14 +108,19 @@ export const content = {
 
   letter: {
     title: "A letter for you",
-    // ✍️ Your message — it types out slowly
-    body: "[WRITE YOUR MESSAGE HERE]",
+    body: `Dear Parthi,
+
+Looking back at these 5 months, every single day with you has felt like the sweetest blessing. From that midnight birthday text at 12:38 AM to all our late-night talks, your little voice notes, your playful temper, and every warm smile — you have brought so much peace, laughter, and pure happiness into my life.
+
+Thank you for understanding me, caring for me, and making every ordinary moment feel special. You are my comfort, my peace, and my favorite person in the entire universe.
+
+I fall more in love with you with every passing day.`,
     button: "Click here 💌",
     finale: "Here's to many more months, Parthi. — Anup",
   },
 
-  // Background music: "Be My Baby" cover, trimmed to a 90s loop with soft fades
-  music: "/__l5e/assets-v1/2d9205ea-6957-4b25-8f3d-eaf31b6df6d9/our-song.mp3",
+  // Audio track (with synthesized harmonic ambient fallback if audio file isn't present)
+  music: "/audio/song.mp3",
 };
 
 export type Content = typeof content;

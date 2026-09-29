@@ -1,14 +1,20 @@
 import { motion } from "framer-motion";
 import { content } from "@/content";
 
-export function Opening({ onBegin, started }: { onBegin: () => void; started: boolean }) {
+export function Opening({
+  onBegin,
+  started,
+}: {
+  onBegin: () => void;
+  started: boolean;
+}) {
   return (
     <section className="relative flex min-h-[100svh] flex-col items-center justify-center px-6 text-center">
       <motion.p
-        initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+        initial={{ opacity: 0, y: 25, filter: "blur(8px)" }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        transition={{ duration: 1.6, delay: 0.3 }}
-        className="text-glow max-w-md font-script text-4xl leading-snug text-blush sm:text-5xl"
+        transition={{ duration: 1.6, delay: 0.4 }}
+        className="text-glow max-w-md font-script text-4xl sm:text-5xl md:text-6xl leading-snug text-blush"
       >
         {content.opening.line}
       </motion.p>
@@ -19,17 +25,21 @@ export function Opening({ onBegin, started }: { onBegin: () => void; started: bo
         transition={{ duration: 1, delay: 1.6 }}
         onClick={onBegin}
         disabled={started}
-        className="glass-card mt-12 rounded-full px-8 py-3 font-body text-sm tracking-[0.18em] text-cream uppercase transition-transform active:scale-95"
+        className="glass-card mt-12 rounded-full px-8 py-3.5 font-body text-sm tracking-[0.2em] text-cream uppercase font-semibold transition-all duration-300 hover:scale-105 active:scale-95 border-blush/40 hover:border-blush shadow-[0_0_25px_rgba(251,164,184,0.35)] cursor-pointer"
       >
         {content.opening.button}
       </motion.button>
 
       <motion.div
         animate={{ y: [0, 10, 0], opacity: started ? 1 : 0 }}
-        transition={{ y: { duration: 2, repeat: Infinity }, opacity: { duration: 1 } }}
-        className="absolute bottom-10 font-body text-xs tracking-[0.3em] text-cream/50 uppercase"
+        transition={{
+          y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+          opacity: { duration: 1 },
+        }}
+        className="absolute bottom-10 flex flex-col items-center gap-1.5 font-body text-xs tracking-[0.3em] text-rosegold/70 uppercase"
       >
-        scroll
+        <span>scroll down</span>
+        <span className="text-sm animate-bounce">↓</span>
       </motion.div>
     </section>
   );

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { content } from "@/content";
 import { Loader } from "@/components/Loader";
 import { Starfield } from "@/components/Starfield";
+import { AudioController, AudioControllerHandle } from "@/components/AudioController";
 import { Opening } from "@/components/sections/Opening";
 import { FirstMessage } from "@/components/sections/FirstMessage";
 import { Timeline } from "@/components/sections/Timeline";
@@ -18,17 +19,17 @@ export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Parthi & Anup — 5 Months" },
+      { title: "Parthi & Anup — 5 Months Together" },
       {
         name: "description",
         content:
-          "A little story for Parthi: five months of us, told in stars, photos and words. From Anup.",
+          "A romantic journey for Parthi: 5 months of us, told in stars, memories and words. From Anup.",
       },
-      { property: "og:title", content: "Parthi & Anup — 5 Months" },
+      { property: "og:title", content: "Parthi & Anup — 5 Months Together" },
       {
         property: "og:description",
         content:
-          "A little story for Parthi: five months of us, told in stars, photos and words. From Anup.",
+          "A romantic journey for Parthi: 5 months of us, told in stars, memories and words. From Anup.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -41,44 +42,43 @@ function Story() {
   const [loading, setLoading] = useState(true);
   const [started, setStarted] = useState(false);
   const [muted, setMuted] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioHandleRef = useRef<AudioControllerHandle | null>(null);
 
   useEffect(() => {
-    const id = setTimeout(() => setLoading(false), 2200);
+    const id = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(id);
   }, []);
 
   const begin = () => {
     setStarted(true);
-    const audio = audioRef.current;
-    if (audio) {
-      audio.volume = 0.35;
-      audio.play().catch(() => {});
+    if (audioHandleRef.current) {
+      audioHandleRef.current.play();
     }
     window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
   };
 
   const toggleMute = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.muted = !audio.muted;
-    setMuted(audio.muted);
+    if (audioHandleRef.current) {
+      const isMutedNow = audioHandleRef.current.toggleMute();
+      setMuted(isMutedNow);
+    }
   };
 
   return (
-    <main className="relative">
+    <main className="relative min-h-screen overflow-x-hidden text-cream selection:bg-blush/30 selection:text-cream">
       <Starfield />
-      <audio ref={audioRef} src={content.music} loop preload="none" />
+      <AudioController ref={audioHandleRef} src={content.music} />
 
       <AnimatePresence>{loading && <Loader key="loader" />}</AnimatePresence>
 
+      {/* Floating Mute/Unmute Control */}
       {started && (
         <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
           onClick={toggleMute}
           aria-label={muted ? "Unmute music" : "Mute music"}
-          className="glass-card fixed top-4 right-4 z-30 size-10 rounded-full text-sm"
+          className="glass-card fixed top-5 right-5 z-40 flex size-11 items-center justify-center rounded-full text-base border-blush/30 hover:border-blush shadow-lg transition-all duration-200 active:scale-95 cursor-pointer"
         >
           {muted ? "🔇" : "🎵"}
         </motion.button>
@@ -94,8 +94,8 @@ function Story() {
       <Months />
       <Letter />
 
-      <footer className="pb-12 text-center font-script text-xl text-cream/45">
-        for Parthi, always — Anup
+      <footer className="py-16 text-center font-script text-2xl sm:text-3xl text-rosegold/70">
+        for Parthi, always & forever — Anup ✨
       </footer>
     </main>
   );
