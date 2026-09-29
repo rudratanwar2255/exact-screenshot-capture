@@ -35,6 +35,7 @@ function FloatingHearts({ count = 14, reduced = false }) {
     const t = state.clock.elapsedTime;
     group.current.children.forEach((child, i) => {
       const s = seeds[i];
+      if (!s) return;
       child.position.y = s.y + Math.sin(t * s.sp + s.r) * 0.9;
       child.rotation.z = Math.sin(t * s.sp * 0.6 + s.r) * 0.35;
     });
