@@ -46,7 +46,7 @@ function FloatingHearts({ count = 14, reduced = false }) {
       {seeds.map((s, i) => (
         <mesh key={i} geometry={geo} position={[s.x, s.y, s.z]} scale={s.s}>
           <meshBasicMaterial
-            color={i % 3 === 0 ? "#f3c6a5" : "#f7b9c8"}
+            color={i % 3 === 0 ? "#9be3d8" : "#7fd4c8"}
             transparent
             opacity={0.35}
             side={THREE.DoubleSide}
@@ -79,7 +79,15 @@ export function Starfield() {
 
   return (
     <div className="pointer-events-none fixed inset-0 -z-10">
-      <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_0%,oklch(0.3_0.1_320)_0%,oklch(0.16_0.06_300)_55%,oklch(0.11_0.04_295)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_0%,oklch(0.3_0.08_200)_0%,oklch(0.17_0.05_210)_55%,oklch(0.12_0.04_215)_100%)]" />
+      <img
+        src="/__l5e/assets-v1/33046b0a-bbd0-4e5d-b64d-ee859267fd5c/little-parthi.jpg"
+        alt=""
+        aria-hidden
+        className="absolute inset-0 h-full w-full object-cover opacity-15"
+        loading="lazy"
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,oklch(0.17_0.05_210_/_55%)_0%,oklch(0.17_0.05_210_/_75%)_60%,oklch(0.14_0.05_212_/_90%)_100%)]" />
       <Canvas
         dpr={[1, 2]}
         gl={{ antialias: false, powerPreference: "high-performance" }}
@@ -97,7 +105,7 @@ export function Starfield() {
         <FloatingHearts count={reduced ? 6 : 14} reduced={reduced} />
         <Drift reduced={reduced} />
       </Canvas>
-      <div className="absolute inset-0 bg-[radial-gradient(60%_40%_at_20%_20%,oklch(0.75_0.1_10_/_12%),transparent_70%),radial-gradient(50%_35%_at_85%_60%,oklch(0.8_0.09_48_/_10%),transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(60%_40%_at_20%_20%,oklch(0.75_0.1_185_/_12%),transparent_70%),radial-gradient(50%_35%_at_85%_60%,oklch(0.8_0.09_48_/_10%),transparent_70%)]" />
     </div>
   );
 }

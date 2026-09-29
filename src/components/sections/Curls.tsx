@@ -16,7 +16,7 @@ export function Curls() {
           <motion.path
             d={SPIRAL}
             fill="none"
-            stroke="oklch(0.86 0.07 10)"
+            stroke="oklch(0.85 0.08 190)"
             strokeWidth="2.5"
             strokeLinecap="round"
             initial={{ pathLength: 0, opacity: 0.2 }}
