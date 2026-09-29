@@ -54,23 +54,20 @@ export function Bracelet() {
           </motion.span>
         ))}
 
-        {/* Floating rotating bracelet disc */}
+        {/* Floating stationary bracelet disc (no rotation) */}
         <motion.div
           onClick={handleOpenBracelet}
           animate={
             reduced
               ? {}
               : {
-                  rotateY: [0, 360],
-                  y: [0, -8, 0],
+                  y: [0, -6, 0],
                 }
           }
           transition={{
-            rotateY: { duration: 18, repeat: Infinity, ease: "linear" },
             y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
           }}
-          className="glass-card relative z-10 size-60 sm:size-64 overflow-hidden rounded-full p-3 border-2 border-blush/40 shadow-[0_0_40px_rgba(251,164,184,0.35)] hover:border-blush/90 transition-all duration-300 cursor-pointer"
-          style={{ transformStyle: "preserve-3d" }}
+          className="glass-card relative z-10 size-60 sm:size-64 overflow-hidden rounded-full p-3 border-2 border-blush/40 shadow-[0_0_45px_rgba(251,164,184,0.4)] hover:border-blush/90 hover:scale-105 transition-all duration-300 cursor-pointer"
         >
           <SmartImage
             name={content.bracelet.image}
