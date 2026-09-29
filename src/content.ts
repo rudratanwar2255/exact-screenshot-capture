@@ -45,17 +45,18 @@ export const content = {
     title: "Our journey",
     subtitle: "Swipe through us.",
     // photo file names live in /public/images/
-    photos: Array.from({ length: 12 }, (_, i) => ({
-      src: `photo-${i + 1}.jpg`,
-      caption: `[CAPTION ${i + 1}]`,
-    })),
+    photos: [
+      { src: "photo-1.jpg", caption: "Us, the sunset, and nowhere else I'd rather be." },
+      { src: "photo-2.jpg", caption: "Even the camera added hearts. It knew." },
+      { src: "photo-3.jpg", caption: "My favourite view: your smile next to mine." },
+    ],
   },
 
   chats: {
     title: "Cute chats",
     caption:
       "The little conversations that became my favorite part of every day.",
-    images: Array.from({ length: 12 }, (_, i) => `chat-${i + 1}.jpg`),
+    images: ["chat-1.jpg", "chat-2.jpg", "chat-3.jpg", "chat-4.jpg"],
   },
 
   bracelet: {
