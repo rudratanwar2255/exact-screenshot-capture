@@ -9,14 +9,17 @@ export function Loader() {
       transition={{ duration: 0.9 }}
       className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-midnight"
     >
-      <motion.div
+      <motion.svg
+        viewBox="0 0 24 24"
         animate={{ scale: [1, 1.18, 1] }}
         transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
-        className="text-6xl"
-        style={{ filter: "drop-shadow(0 0 22px rgba(247,185,200,0.6))" }}
+        className="h-16 w-16"
+        style={{ filter: "drop-shadow(0 0 22px rgba(155,227,216,0.6))" }}
+        fill="oklch(0.85 0.08 190)"
+        aria-hidden
       >
-        💗
-      </motion.div>
+        <path d="M12 21s-7.5-4.9-10-9.5C.5 8 2.5 4.5 6 4.5c2.2 0 3.7 1.2 4.5 2.6.8-1.4 2.3-2.6 4.5-2.6 3.5 0 5.5 3.5 4 7-2.5 4.6-10 9.5-10 9.5z" />
+      </motion.svg>
       <p className="mt-6 font-display text-lg tracking-wide text-cream/80">
         {content.loading}
       </p>
