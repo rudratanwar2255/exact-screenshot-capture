@@ -1,8 +1,5 @@
 import { motion } from "framer-motion";
 
-/**
- * Detailed, romantic SVG Tulip Flower with layered petals, stem, and glowing gradients.
- */
 export function TulipSvg({
   className = "w-24 h-32",
   glowing = true,
@@ -26,7 +23,6 @@ export function TulipSvg({
       }
     >
       <defs>
-        {/* Tulip Petal Gradients */}
         <linearGradient id="tulipMain" x1="50" y1="10" x2="50" y2="70" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#ffd1dc" />
           <stop offset="40%" stopColor="#fba4b8" />
@@ -85,7 +81,7 @@ export function TulipSvg({
         opacity="0.92"
       />
 
-      {/* Back Inner Petal / Core */}
+      {/* Back Inner Petal */}
       <ellipse cx="50" cy="38" rx="14" ry="24" fill="#d95d85" opacity="0.6" />
 
       {/* Left Petal */}
@@ -106,7 +102,7 @@ export function TulipSvg({
         fill="url(#tulipMain)"
       />
 
-      {/* Soft Specular Highlight on Center Petal */}
+      {/* Specular Highlight on Center Petal */}
       <path
         d="M48 18 C 45 28, 44 45, 48 60 C 47 45, 48 28, 50 18 C 49 18, 48 18, 48 18 Z"
         fill="url(#tulipGlow)"
@@ -116,9 +112,6 @@ export function TulipSvg({
   );
 }
 
-/**
- * Ambient floating tulip petals & blossoms drifting gently across background.
- */
 export function FloatingTulipPetals({ count = 10 }: { count?: number }) {
   const petals = [
     { size: 24, delay: 0, x: "12vw", duration: 18, rotate: 25 },
