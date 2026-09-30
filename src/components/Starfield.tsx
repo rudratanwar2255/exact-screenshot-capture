@@ -1,9 +1,23 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars } from "@react-three/drei";
-import { useMemo, useRef } from "react";
+import React, { Component, useMemo, useRef, type ReactNode } from "react";
 import * as THREE from "three";
 import { useReducedMotion } from "@/lib/motion-prefs";
 import littleParthiBg from "../assets/little-parthi.jpg";
+
+class WebGLErrorBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: unknown) {
+    console.warn("WebGL Context safely fell back:", error);
+  }
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
 
 function heartShape() {
   const s = new THREE.Shape();
@@ -76,12 +90,34 @@ function Drift({ reduced }: { reduced: boolean }) {
   return null;
 }
 
+function CssTwinklingStars() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {[...Array(35)].map((_, i) => (
+        <span
+          key={i}
+          className="absolute rounded-full bg-white opacity-70 animate-pulse"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            width: `${Math.random() * 3 + 1}px`,
+            height: `${Math.random() * 3 + 1}px`,
+            animationDuration: `${Math.random() * 3 + 2}s`,
+            animationDelay: `${Math.random() * 2}s`,
+            boxShadow: "0 0 8px rgba(255,255,255,0.8)",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export function Starfield() {
   const reduced = useReducedMotion();
 
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      {/* Fullscreen Background Photo (Natural Colors) */}
+      {/* Fullscreen Background Photo */}
       <img
         src={littleParthiBg}
         alt=""
@@ -89,27 +125,29 @@ export function Starfield() {
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
 
-      {/* Gentle natural dimming so text is crisp without altering the photo's real colors */}
+      {/* Gentle natural dimming so text is crisp */}
       <div className="absolute inset-0 bg-black/45 backdrop-blur-[1px]" />
 
-      {/* 3D Canvas with Stars and Floating Hearts */}
-      <Canvas
-        dpr={[1, 2]}
-        gl={{ antialias: false, powerPreference: "high-performance" }}
-        camera={{ position: [0, 0, 6], fov: 60 }}
-      >
-        <Stars
-          radius={60}
-          depth={40}
-          count={reduced ? 250 : 700}
-          factor={3}
-          saturation={0}
-          fade
-          speed={reduced ? 0 : 0.3}
-        />
-        <FloatingHearts count={reduced ? 4 : 8} reduced={reduced} />
-        <Drift reduced={reduced} />
-      </Canvas>
+      {/* 3D Canvas with WebGL Error Boundary */}
+      <WebGLErrorBoundary fallback={<CssTwinklingStars />}>
+        <Canvas
+          dpr={[1, 1.5]}
+          gl={{ antialias: false, powerPreference: "default" }}
+          camera={{ position: [0, 0, 6], fov: 60 }}
+        >
+          <Stars
+            radius={60}
+            depth={40}
+            count={reduced ? 200 : 500}
+            factor={3}
+            saturation={0}
+            fade
+            speed={reduced ? 0 : 0.3}
+          />
+          <FloatingHearts count={reduced ? 3 : 6} reduced={reduced} />
+          <Drift reduced={reduced} />
+        </Canvas>
+      </WebGLErrorBoundary>
     </div>
   );
 }

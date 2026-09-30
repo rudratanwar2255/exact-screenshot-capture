@@ -1,16 +1,30 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { motion } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { Component, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import * as THREE from "three";
 import { content } from "@/content";
 import { Reveal, Section, SectionTitle } from "@/components/Section";
 import { useReducedMotion } from "@/lib/motion-prefs";
 
+class WebGLErrorBoundary extends Component<{ children: ReactNode; fallback: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: unknown) {
+    console.warn("Heart WebGL safely fell back:", error);
+  }
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
+
 function ParticleHeart({ reduced }: { reduced: boolean }) {
   const ref = useRef<THREE.Points>(null);
   
   const positions = useMemo(() => {
-    const n = reduced ? 350 : 800;
+    const n = reduced ? 250 : 600;
     const arr = new Float32Array(n * 3);
     for (let i = 0; i < n; i++) {
       const t = Math.random() * Math.PI * 2;
@@ -54,6 +68,23 @@ function ParticleHeart({ reduced }: { reduced: boolean }) {
         sizeAttenuation
       />
     </points>
+  );
+}
+
+function GlowingSvgHeart() {
+  return (
+    <div className="relative flex size-full items-center justify-center">
+      <div className="absolute inset-0 rounded-full bg-blush/20 blur-2xl animate-pulse" />
+      <motion.svg
+        animate={{ scale: [1, 1.1, 1] }}
+        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+        viewBox="0 0 100 100"
+        className="size-36 text-blush drop-shadow-[0_0_25px_rgba(251,164,184,0.7)]"
+        fill="currentColor"
+      >
+        <path d="M50 88.9L16.7 55.6C7.6 46.5 7.6 31.7 16.7 22.6C25.8 13.5 40.6 13.5 49.7 22.6L50 22.9L50.3 22.6C59.4 13.5 74.2 13.5 83.3 22.6C92.4 31.7 92.4 46.5 83.3 55.6L50 88.9Z" />
+      </motion.svg>
+    </div>
   );
 }
 
@@ -102,15 +133,17 @@ export function Months() {
     <Section>
       <SectionTitle>{content.months.title}</SectionTitle>
 
-      {/* 3D Glowing Particle Heart */}
-      <div className="h-60 w-60 sm:h-64 sm:w-64">
-        <Canvas
-          dpr={[1, 2]}
-          camera={{ position: [0, 0, 3.2], fov: 50 }}
-          gl={{ antialias: false }}
-        >
-          <ParticleHeart reduced={reduced} />
-        </Canvas>
+      {/* 3D Glowing Particle Heart with Safe Error Boundary */}
+      <div className="h-60 w-60 sm:h-64 sm:w-64 flex items-center justify-center">
+        <WebGLErrorBoundary fallback={<GlowingSvgHeart />}>
+          <Canvas
+            dpr={[1, 1.5]}
+            camera={{ position: [0, 0, 3.2], fov: 50 }}
+            gl={{ antialias: false, powerPreference: "default" }}
+          >
+            <ParticleHeart reduced={reduced} />
+          </Canvas>
+        </WebGLErrorBoundary>
       </div>
 
       {/* Animated Counter */}
