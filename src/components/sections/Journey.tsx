@@ -75,7 +75,7 @@ export function Journey() {
             </p>
             <p className="mt-2 inline-flex items-center gap-1.5 font-body text-[11px] tracking-[0.2em] text-rosegold/80 uppercase group-hover:text-blush transition-colors">
               <Maximize2 className="size-3 text-blush" />
-              Moment {activeIndex + 1} of {photos.length} · Tap to expand
+              Moment ${activeIndex + 1} of ${photos.length} · Tap to expand
             </p>
           </motion.div>
         </AnimatePresence>
