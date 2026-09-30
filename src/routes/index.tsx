@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { content } from "@/content";
 import { Loader } from "@/components/Loader";
 import { Starfield } from "@/components/Starfield";
+import { AmbientDesktopDecorations } from "@/components/AmbientDesktopDecorations";
 import { AudioController, AudioControllerHandle } from "@/components/AudioController";
 import { PhotoModalProvider } from "@/components/PhotoModal";
 import { Opening } from "@/components/sections/Opening";
@@ -46,7 +47,7 @@ function Story() {
   const audioHandleRef = useRef<AudioControllerHandle | null>(null);
 
   useEffect(() => {
-    const id = setTimeout(() => setLoading(false), 1500);
+    const id = setTimeout(() => setLoading(false), 2600);
     return () => clearTimeout(id);
   }, []);
 
@@ -69,6 +70,7 @@ function Story() {
     <PhotoModalProvider>
       <main className="relative min-h-screen overflow-x-hidden text-cream selection:bg-blush/30 selection:text-cream">
         <Starfield />
+        <AmbientDesktopDecorations />
         <AudioController ref={audioHandleRef} src={content.music} />
 
         <AnimatePresence>{loading && <Loader key="loader" />}</AnimatePresence>
