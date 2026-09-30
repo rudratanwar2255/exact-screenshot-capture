@@ -52,9 +52,9 @@ export const content = {
     ],
   },
 
-  journey: {
+      journey: {
     title: "Our journey",
-    subtitle: "Scroll down to walk through the moments that mean the world to me ✨",
+    subtitle: "Swipe through the moments that mean the world to me.",
     photos: [
       {
         src: "photo-1.jpg",
