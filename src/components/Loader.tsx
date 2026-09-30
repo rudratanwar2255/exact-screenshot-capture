@@ -1,7 +1,106 @@
 import { motion } from "framer-motion";
 import { content } from "@/content";
-import { TulipSvg } from "@/components/TulipElements";
 import { Sparkles } from "lucide-react";
+
+export function TulipSvg({
+  className = "w-24 h-32",
+  glowing = true,
+}: {
+  className?: string;
+  glowing?: boolean;
+}) {
+  return (
+    <svg
+      viewBox="0 0 100 130"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={`${className} overflow-visible`}
+      style={
+        glowing
+          ? {
+              filter:
+                "drop-shadow(0 0 20px rgba(251, 164, 184, 0.65)) drop-shadow(0 0 40px rgba(240, 181, 166, 0.4))",
+            }
+          : undefined
+      }
+    >
+      <defs>
+        <linearGradient id="loaderTulipMain" x1="50" y1="10" x2="50" y2="70" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#ffd1dc" />
+          <stop offset="40%" stopColor="#fba4b8" />
+          <stop offset="100%" stopColor="#e57399" />
+        </linearGradient>
+
+        <linearGradient id="loaderTulipLeft" x1="25" y1="15" x2="45" y2="68" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#ffe4ea" />
+          <stop offset="50%" stopColor="#f89cb1" />
+          <stop offset="100%" stopColor="#d95d85" />
+        </linearGradient>
+
+        <linearGradient id="loaderTulipRight" x1="75" y1="15" x2="55" y2="68" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#ffe4ea" />
+          <stop offset="50%" stopColor="#f89cb1" />
+          <stop offset="100%" stopColor="#c74d75" />
+        </linearGradient>
+
+        <linearGradient id="loaderTulipStem" x1="50" y1="65" x2="50" y2="125" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#88c0a0" />
+          <stop offset="60%" stopColor="#629e7c" />
+          <stop offset="100%" stopColor="#437759" />
+        </linearGradient>
+
+        <linearGradient id="loaderTulipLeaf" x1="30" y1="80" x2="15" y2="115" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#9dd4b5" />
+          <stop offset="70%" stopColor="#629e7c" />
+          <stop offset="100%" stopColor="#3d6c50" />
+        </linearGradient>
+      </defs>
+
+      {/* Stem */}
+      <path
+        d="M50 68 C 50 85, 48 105, 50 125"
+        stroke="url(#loaderTulipStem)"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
+
+      {/* Left Leaf */}
+      <path
+        d="M49 98 C 30 92, 18 80, 16 65 C 22 78, 36 94, 49 104"
+        fill="url(#loaderTulipLeaf)"
+        opacity="0.92"
+      />
+
+      {/* Right Leaf */}
+      <path
+        d="M51 110 C 68 102, 80 88, 84 72 C 78 88, 64 105, 51 116"
+        fill="url(#loaderTulipLeaf)"
+        opacity="0.92"
+      />
+
+      {/* Back Core */}
+      <ellipse cx="50" cy="38" rx="14" ry="24" fill="#d95d85" opacity="0.6" />
+
+      {/* Left Petal */}
+      <path
+        d="M50 68 C 34 68, 22 52, 24 32 C 26 18, 38 12, 44 24 C 48 32, 50 50, 50 68 Z"
+        fill="url(#loaderTulipLeft)"
+      />
+
+      {/* Right Petal */}
+      <path
+        d="M50 68 C 66 68, 78 52, 76 32 C 74 18, 62 12, 56 24 C 52 32, 50 50, 50 68 Z"
+        fill="url(#loaderTulipRight)"
+      />
+
+      {/* Center Front Petal */}
+      <path
+        d="M50 70 C 37 70, 32 50, 36 30 C 40 14, 50 8, 50 8 C 50 8, 60 14, 64 30 C 68 50, 63 70, 50 70 Z"
+        fill="url(#loaderTulipMain)"
+      />
+    </svg>
+  );
+}
 
 export function Loader() {
   return (
