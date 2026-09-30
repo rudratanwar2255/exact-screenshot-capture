@@ -46,7 +46,7 @@ function Story() {
   const audioHandleRef = useRef<AudioControllerHandle | null>(null);
 
   useEffect(() => {
-    const id = setTimeout(() => setLoading(false), 1800);
+    const id = setTimeout(() => setLoading(false), 2600);
     return () => clearTimeout(id);
   }, []);
 
