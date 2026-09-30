@@ -27,9 +27,9 @@ export function Bracelet() {
 
       <SectionTitle>{content.bracelet.title}</SectionTitle>
 
-      {/* Stationary Spotlight Pedestal */}
-      <div className="relative mt-2 flex flex-col items-center">
-        {/* Sparkles around */}
+      {/* 3D Spotlight Pedestal */}
+      <div className="relative mt-2 flex flex-col items-center" style={{ perspective: 1000 }}>
+        {/* Sparkles orbiting */}
         {[...Array(8)].map((_, i) => (
           <motion.span
             key={i}
@@ -39,8 +39,9 @@ export function Bracelet() {
               top: `${42 + 40 * Math.sin((i / 8) * Math.PI * 2)}%`,
             }}
             animate={{
-              opacity: [0, 0.8, 0],
-              scale: [0.7, 1.2, 0.7],
+              opacity: [0, 1, 0],
+              scale: [0.6, 1.3, 0.6],
+              rotate: [0, 90, 180],
             }}
             transition={{
               duration: 2.6,
@@ -53,10 +54,23 @@ export function Bracelet() {
           </motion.span>
         ))}
 
-        {/* Stationary Bracelet Photo Disc (No rotation, No floating) */}
-        <div
+        {/* Floating rotating bracelet disc */}
+        <motion.div
           onClick={handleOpenBracelet}
-          className="glass-card relative z-10 size-60 sm:size-64 overflow-hidden rounded-full p-3 border-2 border-blush/40 shadow-[0_0_40px_rgba(251,164,184,0.35)] hover:border-blush/90 hover:scale-105 transition-all duration-300 cursor-pointer"
+          animate={
+            reduced
+              ? {}
+              : {
+                  rotateY: [0, 360],
+                  y: [0, -8, 0],
+                }
+          }
+          transition={{
+            rotateY: { duration: 18, repeat: Infinity, ease: "linear" },
+            y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+          }}
+          className="glass-card relative z-10 size-60 sm:size-64 overflow-hidden rounded-full p-3 border-2 border-blush/40 shadow-[0_0_40px_rgba(251,164,184,0.35)] hover:border-blush/90 transition-all duration-300 cursor-pointer"
+          style={{ transformStyle: "preserve-3d" }}
         >
           <SmartImage
             name={content.bracelet.image}
@@ -66,7 +80,7 @@ export function Bracelet() {
             modalBadge="A Sweet Story 🫶🏻"
             className="size-full rounded-full object-cover pointer-events-none"
           />
-        </div>
+        </motion.div>
 
         {/* Glowing Pedestal Base */}
         <div className="mt-4 h-5 w-44 rounded-[100%] bg-gradient-to-r from-transparent via-blush/40 to-transparent blur-[2px] shadow-[0_0_25px_rgba(251,164,184,0.6)]" />
