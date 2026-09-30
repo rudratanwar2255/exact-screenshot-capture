@@ -278,7 +278,7 @@ export function CircularCarousel({
             <div
               key={idx}
               onClick={(e) => {
-                if (Math.abs(e.clientX - startX.current) < 8) {
+                if (Math.abs(e.clientX - startX.current) < 18) {
                   focusItem(idx);
                   onItemClick?.(item, idx);
                 }
